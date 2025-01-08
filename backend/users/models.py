@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from core.validators import validate_username
+from core.validators import validate_format
 
 
 class CustomUser(AbstractUser):
@@ -17,7 +17,7 @@ class CustomUser(AbstractUser):
         max_length=150,
         unique=True,
         verbose_name='Уникальное имя пользователя',
-        validators=(validate_username,),
+        validators=(validate_format,),
         error_messages={
             'unique': 'Это имя пользователя уже занято.'
         }
