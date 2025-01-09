@@ -138,6 +138,8 @@ class Recipe(models.Model):
 
 
 class Favorite(models.Model):
+    """Класс модели для Избранного."""
+
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -167,6 +169,7 @@ class Favorite(models.Model):
 
 
 class ShoppingList(models.Model):
+    """Класс модели для Списка покупок."""
 
     recipe = models.ForeignKey(
         Recipe,
