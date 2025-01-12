@@ -1,13 +1,17 @@
 from django.urls import include, path
+
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.routers import DefaultRouter
 
-from api.views import (FavoriteAPIView, IngredientViewSet,
-                       ShoppingListAPIView, TagViewSet)
-
+from api.views import (AvatarAPIView, CustomUserViewSet, FavoriteAPIView,
+                       IngredientViewSet, RecipeViewSet, ShoppingListAPIView,
+                       TagViewSet)
 
 router_constructor = (
     ('tags', TagViewSet, 'tags'),
     ('ingredients', IngredientViewSet, 'ingredients'),
+    ('recipes', RecipeViewSet, 'recipes'),
+    ('users', CustomUserViewSet, 'users')
 )
 router = DefaultRouter()
 
@@ -26,4 +30,21 @@ urlpatterns = [
         ShoppingListAPIView.as_view(),
         name='shoping_list-recipe'
     ),
+    path(
+        'users/me/',
+        CustomUserViewSet.as_view(
+            {'get': 'me'},
+            permission_classes=[IsAuthenticated]
+        )
+    ),
+    path(
+        'users/set_password/',
+        CustomUserViewSet.as_view(
+            {'post': 'set_password'},
+            permission_classes=[IsAuthenticated]
+        ),
+        name='set_password'
+    ),
+    path('users/me/avatar', AvatarAPIView.as_view(), name='avatar'),
+    path('auth/', include('djoser.urls.authtoken')),
 ]

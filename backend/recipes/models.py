@@ -23,6 +23,7 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        ordering = ('id',)
         constraints = [
             models.UniqueConstraint(
                 fields=['name', 'measurement_unit'],
@@ -39,11 +40,14 @@ class IngredientInRecipe(models.Model):
     recipe = models.ForeignKey(
         'Recipe',
         on_delete=models.CASCADE,
-        verbose_name='Рецепт')
+        verbose_name='Рецепт',
+        related_name='ingredients_in_recipe'
+    )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        verbose_name='Ингредиент')
+        verbose_name='Ингредиент'
+    )
     amount = models.PositiveSmallIntegerField(
         default=MIN_INGREDIENT_AMOUNT,
         verbose_name='Количество ингредиента',
@@ -62,6 +66,14 @@ class IngredientInRecipe(models.Model):
     class Meta:
         verbose_name = 'Ингредиент в рецепте'
         verbose_name_plural = 'Ингредиенты в рецептах'
+        ordering = ('ingredient',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_recipe-ingredient',
+                violation_error_message='Ингредиент уже в рецепте.'
+            )
+        ]
 
     def __str__(self):
         return f'Ингредиент в рецепте {self.recipe.name}'
@@ -82,6 +94,7 @@ class Tag(models.Model):
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
+        ordering = ('id',)
 
     def __str__(self):
         return self.name
@@ -99,6 +112,7 @@ class Recipe(models.Model):
         verbose_name='Название рецепта'
     )
     image = models.ImageField(
+        upload_to='recipes/images/',
         verbose_name='Изображение готового блюда',
         blank=True
     )
@@ -132,6 +146,7 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+        ordering = ('-id',)
 
     def __str__(self):
         return self.name
