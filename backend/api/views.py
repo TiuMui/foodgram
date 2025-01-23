@@ -116,10 +116,9 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = Ingredient.objects.all()
-        search_param = 'name'
-        search_value = self.request.query_params.get(search_param, None)
+        search_value = self.request.query_params.get('name', None)
         if search_value:
-            queryset = queryset.filter(name__startswith=search_value)
+            queryset = queryset.filter(name__istartswith=search_value.lower())
         return queryset
 
 
