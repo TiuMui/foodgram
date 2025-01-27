@@ -174,7 +174,8 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
     """Класс сериализатора для ингредиентов в рецепте."""
 
     id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all()
+        queryset=Ingredient.objects.all(),
+        source='ingredient'
     )
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -234,15 +235,19 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         request = self.context.get('request')
-        if request.user.is_authenticated:
-            return obj.favorited.filter(user=request.user).exists()
-        return False
+        return (
+            request
+            and request.user.is_authenticated
+            and obj.favorited.filter(user=request.user).exists()
+        )
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
-        if request.user.is_authenticated:
-            return obj.shopping_listed.filter(user=request.user).exists()
-        return False
+        return (
+            request
+            and request.user.is_authenticated
+            and obj.shopping_listed.filter(user=request.user).exists()
+        )
 
     def create(self, validated_data):
         ingredients_data = validated_data.pop('ingredients_in_recipe', [])
@@ -272,7 +277,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         for ingredient in ingredients_for_ricipe:
             IngredientInRecipe.objects.create(
                 recipe=recipe,
-                ingredient=ingredient['id'],
+                ingredient=ingredient['ingredient'],
                 amount=ingredient['amount']
             )
 
