@@ -32,19 +32,13 @@ urlpatterns = [
     ),
     path(
         'users/me/',
-        CustomUserViewSet.as_view(
-            {'get': 'me'},
-            permission_classes=[IsAuthenticated]
-        )
+        CustomUserViewSet.as_view({'get': 'me'})
     ),
     path(
         'users/set_password/',
-        CustomUserViewSet.as_view(
-            {'post': 'set_password'},
-            permission_classes=[IsAuthenticated]
-        ),
+        CustomUserViewSet.as_view({'post': 'set_password'}),
         name='set_password'
     ),
-    path('users/me/avatar', AvatarAPIView.as_view(), name='avatar'),
+    path('users/me/avatar/', AvatarAPIView.as_view(), name='avatar'),
     path('auth/', include('djoser.urls.authtoken')),
 ]

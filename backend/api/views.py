@@ -26,9 +26,16 @@ class CustomUserViewSet(UserViewSet):
     """Класс для представления пользователя."""
 
     @action(
+        detail=False,
+        permission_classes=(IsAuthenticated,)
+    )
+    def me(self, request):
+        return super().me(request)
+
+    @action(
         detail=True,
         methods=['post', 'delete'],
-        permission_classes=[IsAuthenticated]
+        permission_classes=(IsAuthenticated,)
     )
     def subscribe(self, request, id=None):
         subscriber = request.user
