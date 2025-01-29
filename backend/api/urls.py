@@ -1,6 +1,5 @@
 from django.urls import include, path
 
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.routers import DefaultRouter
 
 from api.views import (AvatarAPIView, CustomUserViewSet, FavoriteAPIView,
@@ -40,5 +39,5 @@ urlpatterns = [
         name='set_password'
     ),
     path('users/me/avatar/', AvatarAPIView.as_view(), name='avatar'),
-    path('auth/', include('djoser.urls.authtoken')),
+    path('auth/', include('djoser.urls.authtoken'))
 ]

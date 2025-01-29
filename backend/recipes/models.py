@@ -1,3 +1,5 @@
+import hashlib
+
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -5,7 +7,8 @@ from django.db import models
 from core.constants import (MAX_COOCKING_TIME, MAX_INGREDIENT_AMOUNT,
                             MAX_LENGTH_DEFAULT, MAX_LENGTH_INGREDIENT_NAME,
                             MAX_LENGTH_INGREDIENT_UNIT, MAX_LENGTH_RECIPE_NAME,
-                            MIN_COOCKING_TIME, MIN_INGREDIENT_AMOUNT)
+                            MAX_LENGTH_SHORT_HASH, MIN_COOCKING_TIME,
+                            MIN_INGREDIENT_AMOUNT)
 
 User = get_user_model()
 
@@ -142,11 +145,23 @@ class Recipe(models.Model):
             )
         )
     )
+    short_hash = models.CharField(
+        max_length=MAX_LENGTH_SHORT_HASH,
+        blank=True,
+        null=True,
+        unique=True)
 
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         ordering = ('-id',)
+
+    def save(self, *args, **kwargs):
+        if not self.short_hash:
+            unique_string = f'{self.id}-{self.name}-{self.text}'
+            hash_object = hashlib.sha256(unique_string.encode())
+            self.short_hash = hash_object.hexdigest()[:MAX_LENGTH_SHORT_HASH]
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
