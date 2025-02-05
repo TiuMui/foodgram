@@ -1,0 +1,35 @@
+version: '3'
+
+volumes:
+  pg_data:
+  static:
+  media:
+
+services:
+  db:
+    image: postgres:17.2
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  backend:
+    image: tiumui/foodgram_backend
+    env_file: .env
+    depends_on:
+      - db
+    volumes:
+      - static:/backend_static
+      - media:/mediafiles
+  frontend:
+    image: tiumui/foodgram_frontend
+    volumes:
+      - static:/app/frontend_static
+  gateway:
+    image: tiumui/foodgram_gateway
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - 9090:80
+    volumes:
+      - static:/staticfiles
+      - media:/mediafiles

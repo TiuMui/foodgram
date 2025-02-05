@@ -1,0 +1,10 @@
+venv/
+.git
+db.sqlite3
+.env
+.vscode
+.idea
+static/
+collected_static/
+media/
+mediafiles/

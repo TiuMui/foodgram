@@ -139,4 +139,7 @@ dmypy.json
 .vscode
 
 static/
+collected_static/
+
 media/
+mediafiles/
