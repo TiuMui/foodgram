@@ -5,8 +5,8 @@ from recipes.models import (
     Ingredient,
     IngredientInRecipe,
     Recipe,
+    ShoppingList,
     Tag,
-    ShoppingList
 )
 
 

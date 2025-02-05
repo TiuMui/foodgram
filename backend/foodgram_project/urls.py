@@ -1,6 +1,6 @@
 from django.contrib import admin
-from django.urls import include, path
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import include, path
 
 from recipes.models import Recipe
 

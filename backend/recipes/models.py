@@ -13,7 +13,7 @@ from core.constants import (
     MAX_LENGTH_RECIPE_NAME,
     MAX_LENGTH_SHORT_HASH,
     MIN_COOCKING_TIME,
-    MIN_INGREDIENT_AMOUNT
+    MIN_INGREDIENT_AMOUNT,
 )
 
 User = get_user_model()

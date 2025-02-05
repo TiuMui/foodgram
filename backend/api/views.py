@@ -17,15 +17,15 @@ from api.serializers import (
     RecipeSerializer,
     ShoppingListSerializer,
     SubscriptionSerializer,
-    TagSerializer
+    TagSerializer,
 )
 from recipes.models import (
     Favorite,
     Ingredient,
-    Recipe,
     IngredientInRecipe,
+    Recipe,
     ShoppingList,
-    Tag
+    Tag,
 )
 from users.models import Subscription
 

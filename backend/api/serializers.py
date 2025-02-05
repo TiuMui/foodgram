@@ -5,7 +5,7 @@ from django.core.files.base import ContentFile
 from djoser.serializers import (
     UserCreateSerializer,
     UserSerializer,
-    ValidationError
+    ValidationError,
 )
 from rest_framework import serializers
 
@@ -16,7 +16,7 @@ from recipes.models import (
     IngredientInRecipe,
     Recipe,
     ShoppingList,
-    Tag
+    Tag,
 )
 
 User = get_user_model()

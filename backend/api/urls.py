@@ -8,7 +8,7 @@ from api.views import (
     IngredientViewSet,
     RecipeViewSet,
     ShoppingListAPIView,
-    TagViewSet
+    TagViewSet,
 )
 
 router_constructor = (
