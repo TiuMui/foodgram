@@ -21,8 +21,9 @@ services:
       - media:/mediafiles
   frontend:
     image: tiumui/foodgram_frontend
+    command: cp -r /app/build/. /frontend_static/
     volumes:
-      - static:/app/frontend_static
+      - static:/frontend_static
   gateway:
     image: tiumui/foodgram_gateway
     depends_on:
