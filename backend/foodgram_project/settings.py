@@ -132,6 +132,8 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'collected_static'
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = '/mediafiles'
+media_root_debug = BASE_DIR / 'media'
+media_root_production = '/mediafiles'
+MEDIA_ROOT = media_root_debug if DEBUG else media_root_production
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
