@@ -1,14 +1,23 @@
 import base64
 
-from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
-from djoser.serializers import (UserCreateSerializer, UserSerializer,
-                                ValidationError)
+from django.core.files.base import ContentFile
+from djoser.serializers import (
+    UserCreateSerializer,
+    UserSerializer,
+    ValidationError
+)
 from rest_framework import serializers
 
 from core.constants import MAX_LENGTH_USER_NAME
-from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
-                            ShoppingList, Tag)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientInRecipe,
+    Recipe,
+    ShoppingList,
+    Tag
+)
 
 User = get_user_model()
 
