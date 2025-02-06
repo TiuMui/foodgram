@@ -134,11 +134,15 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+
 STATIC_ROOT = BASE_DIR / 'collected_static'
 
 MEDIA_URL = 'media/'
+
 media_root_debug = BASE_DIR / 'media'
+
 media_root_production = '/mediafiles'
+
 MEDIA_ROOT = media_root_debug if DEBUG else media_root_production
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
