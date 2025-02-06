@@ -245,9 +245,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         shopping_list = ''
         for item in items:
             shopping_list += (
-                f"{item['ingredient__name']}, "
-                f"{item['ingredient__measurement_unit']} "
-                f"- {item['amount']}\n"
+                f"{item['ingredient__name']} "
+                f"- {item['amount']} "
+                f"{item['ingredient__measurement_unit']}\n"
             )
         response = HttpResponse(shopping_list, content_type='text/plain')
         response['Content-Disposition'] = (
