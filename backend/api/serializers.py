@@ -2,12 +2,9 @@ import base64
 
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
-from djoser.serializers import (
-    UserCreateSerializer,
-    UserSerializer,
-    ValidationError,
-)
+from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from core.constants import MAX_LENGTH_USER_NAME
 from recipes.models import (
@@ -18,6 +15,7 @@ from recipes.models import (
     ShoppingList,
     Tag,
 )
+from users.models import Subscription
 
 User = get_user_model()
 
@@ -31,7 +29,7 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
-class CustomUserCreateSerializer(UserCreateSerializer):
+class UserRegistrationSerializer(UserCreateSerializer):
     first_name = serializers.CharField(
         required=True,
         max_length=MAX_LENGTH_USER_NAME
@@ -42,7 +40,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
     )
 
 
-class CustomUserSerializer(UserSerializer):
+class UserMainSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField(default=None)
 
@@ -70,9 +68,37 @@ class CustomUserSerializer(UserSerializer):
         return obj.avatar.url if obj.avatar else None
 
 
-class SubscriptionSerializer(CustomUserSerializer):
+class SubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ('subscriber', 'subscription')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Subscription.objects.all(),
+                fields=['subscriber', 'subscription'],
+                message='Подписка уже оформлена.'
+            )
+        ]
+
+    def validate(self, data):
+        if self.context['request'].user == data.get('subscription'):
+            raise serializers.ValidationError(
+                'Нельзя подписаться на самого себя.'
+            )
+        return data
+
+    def to_representation(self, instance):
+        return UserRecipeSerializer(
+            instance.subscription, context=self.context
+        ).data
+
+
+class UserRecipeSerializer(UserMainSerializer):
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.IntegerField(read_only=True)
+    recipes_count = serializers.IntegerField(
+        read_only=True,
+        source='author_recipes.count'
+    )
 
     class Meta:
         model = User
@@ -98,30 +124,6 @@ class SubscriptionSerializer(CustomUserSerializer):
             'recipes',
             'recipes_count'
         )
-
-    def validate(self, data):
-        request = self.context.get('request')
-        subscription = self.instance
-        user = request.user
-        method = request.method
-        subscription_availability = subscription.subscribers.filter(
-            subscriber=user
-        ).exists()
-
-        if method == 'POST':
-            if user == subscription:
-                raise ValidationError(
-                    'Попытка подписки на себя.'
-                )
-            if subscription_availability:
-                raise ValidationError(
-                    'Подписка уже оформлена.'
-                )
-        if method == 'DELETE' and not subscription_availability:
-            raise ValidationError(
-                'Нет такой подписки.'
-            )
-        return data
 
     def get_recipes(self, obj):
         request = self.context.get('request')
@@ -205,7 +207,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     )
     tags = TagSerializer(many=True, read_only=True)
 
-    author = CustomUserSerializer(read_only=True)
+    author = UserMainSerializer(read_only=True)
     image = Base64ImageField(required=False, allow_null=False)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -267,13 +269,12 @@ class RecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.text)
-        instance.image = validated_data.get('image', instance.image)
-        instance.cooking_time = validated_data.get(
-            'cooking_time',
-            instance.cooking_time
-        )
+        for field in ['name', 'text', 'image', 'cooking_time']:
+            setattr(
+                instance,
+                field,
+                validated_data.get(field, getattr(instance, field))
+            )
         instance.save()
         ingredients_data = validated_data.pop('ingredients_in_recipe', [])
         tags = self.initial_data.get('tags', [])
@@ -282,13 +283,16 @@ class RecipeSerializer(serializers.ModelSerializer):
         self.add_ingredients_in_recipe(instance, ingredients_data)
         return instance
 
-    def add_ingredients_in_recipe(self, recipe, ingredients_for_ricipe):
-        for ingredient in ingredients_for_ricipe:
-            IngredientInRecipe.objects.create(
+    def add_ingredients_in_recipe(self, recipe, ingredients_for_recipe):
+        ingredients_to_create = [
+            IngredientInRecipe(
                 recipe=recipe,
                 ingredient=ingredient['ingredient'],
                 amount=ingredient['amount']
             )
+            for ingredient in ingredients_for_recipe
+        ]
+        IngredientInRecipe.objects.bulk_create(ingredients_to_create)
 
 
 class RecipeShortSerializer(serializers.ModelSerializer):

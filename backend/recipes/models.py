@@ -32,7 +32,7 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-        ordering = ('id',)
+        ordering = ('name',)
         constraints = [
             models.UniqueConstraint(
                 fields=['name', 'measurement_unit'],
@@ -103,7 +103,7 @@ class Tag(models.Model):
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
-        ordering = ('id',)
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -137,7 +137,7 @@ class Recipe(models.Model):
         verbose_name='Теги',
         related_name='tag_recipes'
     )
-    cooking_time = models.IntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления в минутах',
         validators=(
             MaxValueValidator(
@@ -150,16 +150,22 @@ class Recipe(models.Model):
             )
         )
     )
+    pub_date = models.DateTimeField(
+        verbose_name='Дата публикации',
+        auto_now_add=True
+    )
     short_hash = models.CharField(
+        verbose_name='Уникальная строка',
         max_length=MAX_LENGTH_SHORT_HASH,
         blank=True,
         null=True,
-        unique=True)
+        unique=True
+    )
 
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ('-id',)
+        ordering = ('-pub_date',)
 
     def save(self, *args, **kwargs):
         if not self.short_hash:
@@ -184,7 +190,7 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Пользователь',
+        verbose_name='Пользователь избранного',
         related_name='favorites'
     )
 
@@ -215,7 +221,7 @@ class ShoppingList(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Пользователь',
+        verbose_name='Пользователь списка покупок',
         related_name='shopping_lists',
     )
 

@@ -26,7 +26,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'users.apps.UsersConfig',
     'recipes.apps.RecipesConfig',
-    'core.apps.CoreConfig',
+    'core.apps.CoreConfig'
 ]
 
 MIDDLEWARE = [
@@ -114,10 +114,10 @@ DJOSER = {
     'HIDE_USERS': False,
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
-        'user_create': 'api.serializers.CustomUserCreateSerializer',
-        'user_list': 'api.serializers.CustomUserSerializer',
-        'current_user': 'api.serializers.CustomUserSerializer',
-        'user': 'api.serializers.CustomUserSerializer',
+        'user_create': 'api.serializers.UserRegistrationSerializer',
+        'user_list': 'api.serializers.UserMainSerializer',
+        'current_user': 'api.serializers.UserMainSerializer',
+        'user': 'api.serializers.UserMainSerializer',
     },
     'PERMISSIONS': {
         'user': ['rest_framework.permissions.AllowAny', ],
