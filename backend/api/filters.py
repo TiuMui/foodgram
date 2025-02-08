@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django_filters import rest_framework as filters
 from rest_framework.filters import SearchFilter
 
@@ -32,10 +33,13 @@ class RecipeFilter(filters.FilterSet):
         model = Recipe
         fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
 
-    def filter_by_tags(self, queryset, name, tags):
+    def filter_by_tags(self, queryset, name, value):
+        tags = self.request.GET.getlist('tags')
         if tags:
-            tags = tags.split(',')
-            return queryset.filter(tags__slug__in=tags).distinct()
+            query = Q()
+            for tag in tags:
+                query |= Q(tags__slug=tag.strip())
+            return queryset.filter(query).distinct()
         return queryset
 
     def filter_favorited(self, queryset, name, is_favorited):
