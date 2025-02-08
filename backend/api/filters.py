@@ -34,6 +34,7 @@ class RecipeFilter(filters.FilterSet):
 
     def filter_by_tags(self, queryset, name, tags):
         if tags:
+            tags = tags.split(',')
             return queryset.filter(tags__slug__in=tags).distinct()
         return queryset
 
