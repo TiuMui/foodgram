@@ -13,9 +13,8 @@ class CustomSearchFilter(SearchFilter):
 
 
 class RecipeFilter(filters.FilterSet):
-    tags = filters.CharFilter(
-        field_name='tags__slug',
-        method='filter_by_tags'
+    tags = filters.AllValuesMultipleFilter(
+        field_name='tags__slug'
     )
     author = filters.NumberFilter(
         field_name='author',
@@ -31,12 +30,6 @@ class RecipeFilter(filters.FilterSet):
     class Meta:
         model = Recipe
         fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
-
-    def filter_by_tags(self, queryset, name, tags):
-        if tags:
-            tags = tags.split(',')
-            return queryset.filter(tags__slug__in=tags).distinct()
-        return queryset
 
     def filter_favorited(self, queryset, name, is_favorited):
         user = self.request.user
