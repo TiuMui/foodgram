@@ -15,7 +15,6 @@ class CustomSearchFilter(SearchFilter):
 class RecipeFilter(filters.FilterSet):
     tags = filters.CharFilter(
         field_name='tags__slug',
-        lookup_expr='in',
         method='filter_by_tags'
     )
     author = filters.NumberFilter(
