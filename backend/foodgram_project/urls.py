@@ -7,7 +7,7 @@ from recipes.models import Recipe
 
 def redirect_short_url(request, short_path):
     recipe = get_object_or_404(Recipe, short_hash=short_path)
-    url = request.build_absolute_uri(f'/api/recipes/{recipe.id}/')
+    url = request.build_absolute_uri(f'/recipes/{recipe.id}/')
     return redirect(url)
 
 
