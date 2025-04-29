@@ -37,7 +37,7 @@ POSTGRES_DB=<имя_БД>
 DB_HOST=db
 DB_PORT=5432
 SECRET_KEY=<секретный_ключ_Django>
-DEBUG=<False_или_True>
+DEBUG=<False>
 ALLOWED_HOSTS=<перечислить через запятую доменные имена и IP-адреса>
 CSRF_TRUSTED_ORIGINS=<перечислить через запятую доменные имена>
 ```
@@ -112,7 +112,7 @@ POSTGRES_DB=<имя_БД>
 DB_HOST=db
 DB_PORT=5432
 SECRET_KEY=<секретный_ключ_Django>
-DEBUG=<False_или_True>
+DEBUG=<False>
 ALLOWED_HOSTS=<перечислить через запятую доменные имена и IP>
 CSRF_TRUSTED_ORIGINS=<перечислить через запятую доменные имена>
 
